@@ -2,13 +2,14 @@
 
 document.addEventListener('DOMContentLoaded', function(){
 
-    var num1 = 0, num2 = 0, operator = "", total = 0, operating = false, calculated = false, adjuster = "";
+    var num1 = 0, num2 = 0, operator = "", total = 0, adjuster = "";
+    var operating = false, calculated = false, lastClick = "";
     var outPut = document.getElementById("outPutDisplay");
 
 //Event Listeners
     var numbers = document.getElementsByClassName("num");
     for(var i = 0 ; i < numbers.length ; i++){
-        numbers[i].addEventListener("click", handleNumbers)
+        numbers[i].addEventListener("click", handleNumbers);
         }
 
     var operators = document.getElementsByClassName("operator");
@@ -25,68 +26,61 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById("reset").addEventListener("click", reset);
 
 
-//other functions
+//other helper functions below
 
     function handleNumbers(event){
        var clickedNum = event.target.innerHTML;
-       if (operating === false ){
-           num1 += clickedNum;
+
+       if (calculated === true && operating === false){
+           outPut.innerHTML = "Press an operator to continue calculating"
+        }
+       else if (calculated === false && operating === false ){
+            if (num1 === 0){
+              num1 = clickedNum;
+            } else {
+              num1 += clickedNum;
+            }
            outPut.innerHTML = num1;
          }
-       else if (operating === true){
-           num2 += clickedNum;
+       else if (calculated === false && operating === true ){
+            if (num2 === 0){
+              num2 = clickedNum;
+            } else {
+              num2 += clickedNum;
+            }
            outPut.innerHTML = num2;
        } else {
-           outPut.innerHTML = "Error."
+           outPut.innerHTML = "Error. Press '=' to continue, or Clear."
        }
      }
 
 
     function handleOperators(event) {
-      if (calculated === true) {
-          num1 = total;
-          num2 = "";
-          operator = event.target.innerHTML;
-          outPut.innerHTML = operator;
-          operating = true, calculated = false;
+        if (operating === true && calculated === false) {
+          outPut.innerHTML = "Invalid. Press '=' then operator";
         }
-        else if (operating === true) {
-          outPut.innerHTML = "invalid value";
-        } else {
-        operator = event.target.innerHTML;
-        operating = true;
-        outPut.innerHTML = operator;
-      }
-    }
-
-    //
-    //
-    // function handleOperators(event) {
-    //     if (operating === true) {
-    //       outPut.innerHTML = "invalid value";
-    //     }
-    //     else {
-    //         if (calculated === true) {
-    //           num1 = total;
-    //           num2 = "";
-    //           calculated = false;
-    //         }
-    //         operator = event.target.innerHTML;
-    //         operating = true;
-    //         outPut.innerHTML = operator;
-    //       }
-    //     }
+        else {
+            if (calculated === true) {
+              num1 = total;
+              num2 = "";
+              calculated = false;
+            }
+            operator = event.target.innerHTML;
+            operating = true;
+            outPut.innerHTML = operator;
+          }
+        }
 
 
     function calculateTotal(){
         num1 = parseFloat(num1), num2 = parseFloat(num2);
         if (num1 === NaN || num2 === NaN || operator === "") {
             outPut.innerHTML = "Please enter a valid operation";
-            reset();
+            num1 = 0, num2 = 0, operator = "", total = 0;
         } else {
             switch(operator){
                 case "/":
-                    total = num1 / num2;
+                    total = division(num1, num2);
                     break;
                 case "x":
                     total = num1 * num2;
@@ -103,8 +97,17 @@ document.addEventListener('DOMContentLoaded', function(){
               }
               outPut.innerHTML = total;
               calculated = true;
+              operating = false;
             }
           }
+
+
+    function division(num1, num2){
+        if (num2 === 0) {
+          return "Not a number";
+        }
+        return num1 / num2;
+    }
 
 
     function handleAdjusters(event){
@@ -112,8 +115,7 @@ document.addEventListener('DOMContentLoaded', function(){
         var currentVal = outPut.innerHTML;
 
         if (parseFloat(currentVal) === NaN){
-            outPut.innerHTML = "Not a valid entry";
-            reset();
+            outPut.innerHTML = "Invalid. Click '=' or C to continue";
             return;
         }
         if (operating === false){
@@ -125,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 num1 = String(num1 / 100);
                 break;
                 case ".":
-                num1 += ".";
+                num1 = handleDecimal(String(num1));
                 break;
                 default:
                 total = "Please enter a valid operation";
@@ -135,13 +137,13 @@ document.addEventListener('DOMContentLoaded', function(){
         } else {
             switch(adjuster){
                 case "+/-":
-                num2 = num2 * -1;
+                num2 = String(num2 * -1);
                 break;
                 case "%":
-                num2 = num2 / 100;
+                num2 = String(num2 / 100);
                 break;
                 case ".":
-                num2 += ".";
+                num2 = handleDecimal(String(num2));
                 break;
                 default:
                 total = "Please enter a valid operation";
@@ -151,6 +153,13 @@ document.addEventListener('DOMContentLoaded', function(){
               }
             }
 
+    function handleDecimal(number){
+        if (number.indexOf(".") > -1){
+           return number;
+        } else {
+          return number += "."
+        }
+    }
 
     function reset(){
       num1 = 0, num2 = 0, operator = "", total = 0, operating = false, calculated = false;

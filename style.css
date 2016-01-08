@@ -20,6 +20,10 @@ td {
   cursor: pointer;
 }
 
+td:active{
+  background-color: rgba(158, 158, 158, 0.34);
+}
+
 #body{
     display:inline-block;
 }
@@ -35,6 +39,7 @@ td {
 #outPutDisplay{
   text-align: right;
   padding: 10%;
+  padding-left: 0;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 17px;
 }
