@@ -17,6 +17,7 @@ td {
   height: 65px;
   text-align: center;
   background-color: lightblue;
+  cursor: pointer;
 }
 
 #body{
