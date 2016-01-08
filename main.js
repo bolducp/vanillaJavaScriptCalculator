@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function(){
               }
             }
 
+
     function handleDecimal(number){
         if (number.indexOf(".") > -1){
            return number;
@@ -160,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function(){
           return number += "."
         }
     }
+
 
     function reset(){
       num1 = 0, num2 = 0, operator = "", total = 0, operating = false, calculated = false;
